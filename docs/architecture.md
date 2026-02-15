@@ -46,6 +46,10 @@ Together, the FlowChart, viewport, and Properties panel form a triad: one select
 
 ## 3. Technical architecture
 
+### Interface
+
+- **Svelte** powers the user interface for both the web app and the Electron app. The viewport, FlowChart, Properties panel, and all shell UI are built with Svelte, giving a single UI stack across platforms and keeping the front end reactive and maintainable.
+
 ### Modeling kernel
 
 - **OpenCascade (C++)** is the intended modeling kernel for geometry and topology. If the engine is later split into a separate (e.g. private) repo, a stable API/ABI boundary should be defined so the rest of the app depends on that contract rather than kernel internals.
