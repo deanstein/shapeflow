@@ -50,6 +50,10 @@ Together, the FlowChart, viewport, and Properties panel form a triad: one select
 
 - **Svelte** powers the user interface for both the web app and the Electron app. The viewport, FlowChart, Properties panel, and all shell UI are built with Svelte, giving a single UI stack across platforms and keeping the front end reactive and maintainable.
 
+### Application API
+
+- ShapeFlow exposes its **own API** that all tools, buttons, and automation use. The API is built incrementally as features are added: every UI action (create shape, run flow, set attribute, etc.) goes through this API. The UI is a thin client that calls the API; the API is the single integration point for the engine, for future scripting, and for any Flow Creator (see below). This keeps behavior consistent, testable, and reusable.
+
 ### Modeling kernel
 
 - **OpenCascade (C++)** is the intended modeling kernel for geometry and topology. If the engine is later split into a separate (e.g. private) repo, a stable API/ABI boundary should be defined so the rest of the app depends on that contract rather than kernel internals.
