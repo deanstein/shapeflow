@@ -90,20 +90,7 @@ Together, the FlowChart, viewport, and Properties panel form a triad: one select
 
 ---
 
-## 4. Out of scope / open questions
-
-### Auth and monetization
-
-- Auth strategy is not yet defined. Requirements may include: taking payments, enforcing a paywall for the Electron app, or identifying users for licensing.
-- Options to consider later: license keys, OAuth plus a minimal backend, or deferring auth and shipping local-only first.
-
-### Persistence
-
-- Local storage only for the current scope. File format, schema versioning, and upgrade path are to be defined in future work.
-
----
-
-## 5. Planned features
+## 4. Planned features
 
 The following features are intended for ShapeFlow. Order and grouping are for clarity; implementation priority is tracked in section 6.
 
@@ -172,6 +159,19 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
 ### Extensions
 
 - **Extensions:** A way for third parties to extend the program using its API. Details TBD.
+
+---
+
+## 5. Out of scope / open questions
+
+### Auth and monetization
+
+- Auth strategy is not yet defined. Requirements may include: taking payments, enforcing a paywall for the Electron app, or identifying users for licensing.
+- Options to consider later: license keys, OAuth plus a minimal backend, or deferring auth and shipping local-only first.
+
+### Persistence
+
+- Local storage only for the current scope. File format, schema versioning, and upgrade path are to be defined in future work.
 
 ---
 
