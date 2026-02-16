@@ -42,6 +42,16 @@ The **FlowChart** is an interface element that is always present alongside the 3
 
 Together, the FlowChart, viewport, and Properties panel form a triad: one selection state, multiple views.
 
+### Flow Creator (authoring flows)
+
+- A **Flow Creator** is the mechanism by which users define or edit the rules and actions that make up a Flow applied to a Shape. Two main approaches:
+
+  - **Script interface:** Users write code (e.g. a small DSL or JavaScript/TypeScript) that calls the application API. Pros: full expressiveness, easy to version-control and share as text, fast to implement. Cons: steeper for non-programmers (many architects and trades prefer not to code), less discoverable.
+
+  - **Node-based interface:** Users build flows in a visual node graph (similar to the FlowChart, but for authoring logic rather than browsing hierarchy). Pros: discoverable, approachable for non-coders, aligns with the existing node metaphor in the app. Cons: more work to build and maintain, can get messy for complex logic, version control is trickier (serialized graphs).
+
+- **Recommendation:** Define the API and a small script/DSL surface first so that every flow has a clear, executable representation. Ship a script-based Flow Creator (or even “paste script” per flow) to get real use and feedback. Then add a **node-based Flow Creator** that targets the same API—nodes become a visual wrapper that generates or configures the same script/API calls. That way one execution model supports both: power users can write script, others can wire nodes, and the system stays consistent. If the audience is heavily non-technical, prioritizing the node-based creator earlier may be worth it.
+
 ---
 
 ## 3. Technical architecture
@@ -93,7 +103,79 @@ Together, the FlowChart, viewport, and Properties panel form a triad: one select
 
 ---
 
-## 5. Proposed future work and repo strategy
+## 5. Planned features
+
+The following features are intended for ShapeFlow. Order and grouping are for clarity; implementation priority is tracked in section 6.
+
+### 3D canvas and visual styles
+
+- **3D canvas** with controls for visual styles:
+  - **Surfaces:** Ambient brightness, ambient contrast, shadow intensity, monochrome mode, default surface colors, section cut line width and color, section poche color.
+  - **Edges:** Visibility, color, contrast.
+  - **Environment:** Grid, axes, north arrow, sky color(s), ground plane transparency and color.
+  - **Diagnostics:** Watertight issues, back faces.
+
+### FlowChart canvas
+
+- **FlowChart canvas** — Interactive, always mirroring the 3D scene. Selection in the FlowChart selects the corresponding elements in the 3D canvas (and vice versa).
+
+### Location
+
+- **Set Location** — Gets flat satellite image and 3D terrain with satellite image applied using UVs.
+- **Update Location** — Refresh or change location data.
+
+### Undo and redo
+
+- **Undo and Redo** — Full support for reverting and replaying user actions.
+
+### Properties
+
+- **Properties** — Examine and change object properties, including applying Flows to shapes.
+
+### Drawing tools
+
+- **Drawing tools:** Vertex, Line, Offset Line, Rectangle, Arc, Polygon, Circle. When a closed loop is detected, ShapeFlow automatically creates a face that can then be extruded.
+- **3D Text** tool.
+
+### Solid operations
+
+- **Boolean operations:** Solid Join, Solid Intersect, Solid Cut.
+- **Solid creation:** Sweep, Loft.
+- **Solid modification:** Shell, Fillet.
+
+### Container tools
+
+- **Containers:** Create container, edit container, unlink container, explode container.
+
+### Materials
+
+- **Material tools:** Paintbrush, Edit Placement.
+- Create and edit **Materials**.
+- Ability to point to a **local directory** to pull materials from.
+
+### Layers
+
+- **Layers:** Create, delete, hide, apply geometry to layers.
+
+### Scenes
+
+- **Scenes:** Remember camera state, visual styles, and layer state. Add, remove, update scenes.
+
+### Animations
+
+- **Animations:** Combine scenes into animations. Control order and set durations.
+
+### Content library
+
+- **Content library:** View all objects in the model (all containers). Point to local directories for external 3D content (e.g. STL, OBJ, FBX, SKP, 3DM).
+
+### Extensions
+
+- **Extensions:** A way for third parties to extend the program using its API. Details TBD.
+
+---
+
+## 6. Proposed future work and repo strategy
 
 ### Repo strategy
 
