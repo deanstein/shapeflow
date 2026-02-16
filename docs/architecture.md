@@ -26,6 +26,15 @@ A **Shape** is anything the user can select in the model: an instance, a body, a
 - **Attributes:** Metadata (e.g. string tags, numbers) attached to that Shape.
 - **Flows:** Rules or actions that operate on that Shape and can produce or update geometry.
 
+### Containers: Groups and Components
+
+Geometry can be grouped into **containers**. Two kinds are supported:
+
+- **Group** — A container whose copies are independent. Duplicating a group produces a separate copy; editing one does not affect the others.
+- **Component** — A container whose copies are linked (instanced). Duplicating a component produces instances that share a definition; editing the definition (or one instance) propagates to all instances. Useful for repeated elements (e.g. windows, columns).
+
+Both are selectable Shapes and can hold other geometry (and nested groups or components).
+
 ### Flows
 
 **Flows** are rules or actions attached to a Shape. For example, a planar face might have a Flow that “splits into panels and extrudes those panels.” When the face’s geometry changes, that Flow can be re-run (by the user or automatically) to regenerate the panels. Flows are the main mechanism for parametric, repeatable behavior.
@@ -140,7 +149,7 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
 
 ### Container tools
 
-- **Containers:** Create container, edit container, unlink container, explode container.
+- **Groups and Components:** Create group or component, edit (enter) group or component, unlink component (break instance link), explode group or component.
 
 ### Materials
 
@@ -162,7 +171,7 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
 
 ### Content library
 
-- **Content library:** View all objects in the model (all containers). Point to local directories for external 3D content (e.g. STL, OBJ, FBX, SKP, 3DM).
+- **Content library:** View all objects in the model (groups, components, and other geometry). Point to local directories for external 3D content (e.g. STL, OBJ, FBX, SKP, 3DM).
 
 ### Extensions
 
@@ -171,6 +180,10 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
 ### Flow Recording
 
 - **Flow Recording** — User-facing feature to record flows and user actions for replay (reproducibility, automation) and debugging. The recorded flow becomes a **Flow** that the user can run once as recorded or save and reuse in other contexts (e.g. apply to other shapes or projects). Recordings can be inspected, re-run, or exported. This may be built on the same technology as journaling (see Technical architecture).
+
+### Key bindings
+
+- **Customizable key bindings** from the start. ShapeFlow ships with a recommended set of shortcuts (tools, views, undo/redo, etc.), but the user can always change any binding to suit their workflow. No shortcuts are locked; customization is a first-class feature.
 
 ---
 
