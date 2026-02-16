@@ -88,6 +88,14 @@ Together, the FlowChart, viewport, and Properties panel form a triad: one select
 
 - All core modeling, Flow execution, and persistence are designed to run locally. No requirement for cloud compute or cloud storage for the core product. This keeps cost and latency low and avoids vendor lock-in for user data.
 
+### Test suite
+
+- A **full test suite** covers all public APIs and critical functions. Tests are run on every change (e.g. in CI). New tests are added as new APIs or behavior are developed so that coverage and confidence stay high. This applies to both the engine (Rust) and the UI/API layer (TypeScript) where appropriate.
+
+### Journaling
+
+- **Journaling** is an internal mechanism that records fine-grained API calls and events as the user takes actions (tool use, flow execution, selection, etc.). The journal serves debugging, auditing, and as the underlying data for user-facing **Flow Recording** (see Planned features): Flow Recording may be built on the same technology, exposing a higher-level or exportable view of the journal. One implementation can support both—fine-grained logging for developers and a simplified “record / replay” experience for users.
+
 ---
 
 ## 4. Planned features
@@ -159,6 +167,10 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
 ### Extensions
 
 - **Extensions:** A way for third parties to extend the program using its API. Details TBD.
+
+### Flow Recording
+
+- **Flow Recording** — User-facing feature to record flows and user actions for replay (reproducibility, automation) and debugging. The recorded flow becomes a **Flow** that the user can run once as recorded or save and reuse in other contexts (e.g. apply to other shapes or projects). Recordings can be inspected, re-run, or exported. This may be built on the same technology as journaling (see Technical architecture).
 
 ---
 
