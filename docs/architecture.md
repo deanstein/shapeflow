@@ -46,9 +46,14 @@ Together, the FlowChart, viewport, and Properties panel form a triad: one select
 
 ## 3. Technical architecture
 
+### Languages
+
+- **TypeScript** is used for the UI layer: Svelte components, shell logic, and the code that calls the application API. This keeps the interface fast to iterate on and type-safe where it matters most for product behavior.
+- **Rust** is used for the engine: flow execution, scene graph, persistence, and the integration with OpenCascade (via C API or a Rust crate). The same Rust engine compiles to **WASM** for the web app and to **native** for the Electron app, so one codebase serves both platforms. The UI (TypeScript/Svelte) is a thin client that calls into this engine.
+
 ### Interface
 
-- **Svelte** powers the user interface for both the web app and the Electron app. The viewport, FlowChart, Properties panel, and all shell UI are built with Svelte, giving a single UI stack across platforms and keeping the front end reactive and maintainable.
+- **Svelte** powers the user interface for both the web app and the Electron app. The viewport, FlowChart, Properties panel, and all shell UI are built with Svelte (and TypeScript), giving a single UI stack across platforms and keeping the front end reactive and maintainable.
 
 ### Application API
 
