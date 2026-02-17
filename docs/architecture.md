@@ -8,6 +8,7 @@
 
 - **Flows:** Parametric rules or actions attached to geometry (e.g. “split face into panels and extrude”). When the source shape changes, flows can be re-run to regenerate derived geometry.
 - **FlowChart:** A 2D (or possibly 3D) node graph always visible next to the 3D view, showing instance/geometry relationships and flows. Selection in the FlowChart equals selection in the viewport and drives the Properties panel.
+- **3D sketching:** The modeling experience and capabilities are built around **3D sketching** workflows: drawing on surfaces (e.g. a line on a face that splits it into two faces), then operating on the result (extrude one face, apply a flow, etc.). The kernel (OpenCascade) supports splitting faces by on-surface geometry; ShapeFlow exposes this so the designer can sketch directly on the model and refine it face by face.
 - **Local-first:** Core modeling runs on local compute with local storage to avoid cloud cost and latency; no dependency on the cloud for day-to-day modeling.
 
 **Target platforms**
@@ -111,6 +112,25 @@ Together, the FlowChart, viewport, and Properties panel form a triad: one select
 
 The following features are intended for ShapeFlow. Order and grouping are for clarity; implementation priority is tracked in section 6.
 
+### General UX
+
+- **Commit with Enter or Escape** — In any tool with live preview or in-progress geometry, **Enter** or **Escape** commits the current changes (accept/cancel or confirm, as appropriate). Consistent across tools so the designer always knows how to finish or bail.
+- **Type dimensions anytime** — Whenever a dimension is visible on screen (length, distance, angle, etc.), the user can type a value to set it. No need to click a field first; focus can stay on the canvas.
+- **Temporary preview graphics** — Tools that create or transform geometry (e.g. drawing a line, offsetting, copy, array) show **temporary** preview graphics before execution. The designer sees the result in place; committing (e.g. Enter) applies it, cancel (Escape) discards it. Same pattern across tools for consistency.
+- **Hide rest of model (H)** — When editing inside a group or component, tapping **H** toggles hiding or showing the context outside that container (the rest of the model). Reduces clutter while working on the contents; tap H again to bring the rest back.
+
+### Selection
+
+- **Direct selection** — Single-click to select an edge, face, or instance. Modifiers:
+  - **Ctrl** — Add to selection.
+  - **Shift** — Add or remove from selection (toggle).
+  - **Alt** — Remove from selection.
+- **All connected** — Double-click any raw geometry (edge, face) to select all connected geometry (e.g. the whole body).
+- **Area selection (window)** — Click and drag to draw a selection window:
+  - **Left to right** — Only objects fully inside the box are selected.
+  - **Right to left** — Anything touching the box is selected.
+  - The same **Ctrl**, **Shift**, and **Alt** modifiers apply: add to selection, toggle in/out, or remove from selection.
+
 ### 3D canvas and visual styles
 
 - **3D canvas** with controls for visual styles:
@@ -118,6 +138,7 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
   - **Edges:** Visibility, color, contrast.
   - **Environment:** Grid, axes, north arrow, sky color(s), ground plane transparency and color.
   - **Diagnostics:** Watertight issues, back faces.
+  - **Highlights:** Option for **hover highlights** (faces, edges, vertices, containers) when the cursor is over them; and **selection highlights** for the current selection. Both can be toggled or adjusted so the designer can choose how much feedback they want.
 
 ### FlowChart canvas
 
@@ -138,20 +159,44 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
 
 ### Drawing tools
 
-- **Drawing tools:** Vertex, Line, Offset Line, Rectangle, Arc, Polygon, Circle. When a closed loop is detected, ShapeFlow automatically creates a face that can then be extruded.
+- **Drawing tools:** Vertex, Line, Offset Line, Rectangle, Arc, Polygon, Circle. When a closed loop is detected, ShapeFlow automatically creates a face that can then be extruded. Drawing on an existing face can split that face (e.g. a line on a cube face yields two faces); the designer can then extrude or otherwise operate on each resulting face—part of the 3D sketching workflow (see vision).
 - **3D Text** tool.
+
+### Move, copy, and array
+
+- **Move tool** — Interactive move: first point (from), second point (to). Uses inferencing and snapping to keep placement accurate. Dimensions on screen; designer can type a distance.
+- **Quick Copy** — While using Move, tapping **Ctrl** creates a copy instead of moving the original (Move under the hood; Ctrl toggles copy mode). Preview shows the copy before commit.
+- **Array tool** — Builds an array of copies along a vector. Same interaction as Move (first point, second point; inferencing and snapping). Produces multiple copies along that vector; count and spacing can be set (e.g. on-screen or typed). Temporary preview shows the full array before execution.
 
 ### Snapping and inferencing
 
 - **Snapping and inferencing engine:**
   - **Snap targets:** Vertices, midpoints, centroids, edges, and faces. The user can snap to these when drawing, moving, or placing geometry.
   - **Hover inferences:** While hovering over geometry, the engine can generate **hover inferences** (temporary guides) using the **local coordinate system** of the selection or container. This supports precise input and alignment, especially when working inside groups or components that have their own origin and axes.
+  - **Axis lock (Shift):** During a **modification** (e.g. Move) or **drawing** (e.g. Line) tool, holding **Shift** locks to the current axis. Moving or drawing off that axis is not possible regardless of cursor position, so the designer can stay on one axis without drift.
+
+### On-screen dimensions
+
+- **Every tool** shows **on-screen dimensions** (lengths, distances, angles, etc.) as the designer works. The designer can read these values and can type values directly to set lengths, distances, and other numeric parameters, so that precise input is always available without leaving the current tool.
 
 ### Solid operations
 
 - **Boolean operations:** Solid Join, Solid Intersect, Solid Cut.
 - **Solid creation:** Sweep, Loft.
 - **Solid modification:** Shell, Fillet.
+
+### Face and edge tools
+
+- **Flatten** — Force a planar face to align to another planar face; clean up edges where they formerly intersected.
+- **Extrude Face** — Extrude 2D faces into a solid, and extend or trim existing solids.
+- **Extrude Edge** — Extrude selected edges into one or more faces.
+- **Offset Face** — Offset the perimeter edge loop on a face (creating a new loop and optionally new geometry).
+- **Offset Edge** — Offset a series of edges in their plane.
+
+### BRep and mesh conversion
+
+- **Convert BRep to mesh** — Ability to tessellate BRep (boundary representation) geometry into meshes for lighter display and better performance, or for export/import with mesh-based formats (e.g. STL, OBJ). OpenCascade supports this via its meshing APIs (e.g. `BRepMesh_IncrementalMesh` and related), so ShapeFlow can offer explicit conversion and optionally cache or store mesh representations alongside BRep where useful.
+- **Convert mesh to BRep** — Mesh-to-BRep conversion is desirable (e.g. to make imported mesh geometry editable as solid bodies). OpenCascade does not provide this out of the box; it would require implementing or integrating a solution (e.g. surface reconstruction or a dedicated pipeline) if ShapeFlow is to support it.
 
 ### Container tools
 
