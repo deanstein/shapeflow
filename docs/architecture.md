@@ -93,6 +93,7 @@ Together, the FlowChart, viewport, and Properties panel form a triad: one select
 
 - Full access to native code or to the same WASM build with more CPU and memory. Enables higher performance and potentially more features (e.g. more Flow types, larger models, native kernel).
 - Target for “super users” and, optionally, paid/freemium.
+- **Multiple windows** — Desktop users can have multiple ShapeFlow windows (or instances) open at once, each with its own model, so several projects or views can be worked on side by side.
 
 ### Local-first
 
@@ -118,6 +119,7 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
 - **Type dimensions anytime** — Whenever a dimension is visible on screen (length, distance, angle, etc.), the user can type a value to set it. No need to click a field first; focus can stay on the canvas.
 - **Temporary preview graphics** — Tools that create or transform geometry (e.g. drawing a line, offsetting, copy, array) show **temporary** preview graphics before execution. The designer sees the result in place; committing (e.g. Enter) applies it, cancel (Escape) discards it. Same pattern across tools for consistency.
 - **Hide rest of model (H)** — When editing inside a group or component, tapping **H** toggles hiding or showing the context outside that container (the rest of the model). Reduces clutter while working on the contents; tap H again to bring the rest back.
+- **Double-click to edit** — Double-click a group or component to enter it for editing. Consistent way to step into a container.
 
 ### Selection
 
@@ -168,6 +170,12 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
 - **Quick Copy** — While using Move, tapping **Ctrl** creates a copy instead of moving the original (Move under the hood; Ctrl toggles copy mode). Preview shows the copy before commit.
 - **Array tool** — Builds an array of copies along a vector. Same interaction as Move (first point, second point; inferencing and snapping). Produces multiple copies along that vector; count and spacing can be set (e.g. on-screen or typed). Temporary preview shows the full array before execution.
 
+### Clipboard: cut, copy, paste
+
+- **Cut** and **Copy** — Standard clipboard: selection is cut or copied to the clipboard.
+- **Paste** — Pasted geometry appears at the cursor for placement (same flow as Move: position with inferencing/snapping, then commit).
+- **Paste-In-Place** — Pasted geometry is placed exactly where it was in world space. Use when moving elements out of a container, or when pasting from another model and wanting to preserve position. No cursor placement step.
+
 ### Snapping and inferencing
 
 - **Snapping and inferencing engine:**
@@ -200,7 +208,8 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
 
 ### Container tools
 
-- **Groups and Components:** Create group or component, edit (enter) group or component, unlink component (break instance link), explode group or component.
+- **Groups and Components:** Create group or component, edit (enter) group or component, unlink component (break instance link), explode group or component. **Double-click** a group or component to enter it for editing.
+- **Edit Container tool** — Select a nested container (group or component instance) and enter it for editing immediately, without double-clicking repeatedly through the hierarchy. Lets the designer jump directly to a deeply nested container instead of stepping in one level at a time.
 
 ### Materials
 
