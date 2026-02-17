@@ -33,7 +33,7 @@ Geometry can be grouped into **containers**. Two kinds are supported:
 - **Group** — A container whose copies are independent. Duplicating a group produces a separate copy; editing one does not affect the others.
 - **Component** — A container whose copies are linked (instanced). Duplicating a component produces instances that share a definition; editing the definition (or one instance) propagates to all instances. Useful for repeated elements (e.g. windows, columns).
 
-Both are selectable Shapes and can hold other geometry (and nested groups or components).
+Both are selectable Shapes and can hold other geometry (and nested groups or components). Groups and components can have their own **local coordinate system**, including origin and axial alignment, so that drawing, snapping, and placement inside the container (or when placing instances) use that frame.
 
 ### Flows
 
@@ -140,6 +140,12 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
 
 - **Drawing tools:** Vertex, Line, Offset Line, Rectangle, Arc, Polygon, Circle. When a closed loop is detected, ShapeFlow automatically creates a face that can then be extruded.
 - **3D Text** tool.
+
+### Snapping and inferencing
+
+- **Snapping and inferencing engine:**
+  - **Snap targets:** Vertices, midpoints, centroids, edges, and faces. The user can snap to these when drawing, moving, or placing geometry.
+  - **Hover inferences:** While hovering over geometry, the engine can generate **hover inferences** (temporary guides) using the **local coordinate system** of the selection or container. This supports precise input and alignment, especially when working inside groups or components that have their own origin and axes.
 
 ### Solid operations
 
