@@ -132,6 +132,11 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
   - **Left to right** — Only objects fully inside the box are selected.
   - **Right to left** — Anything touching the box is selected.
   - The same **Ctrl**, **Shift**, and **Alt** modifiers apply: add to selection, toggle in/out, or remove from selection.
+- **Tab + hover** — With hover highlight active, **Tab** expands selection based on what’s under the cursor (within the current container context only):
+  - **Over an edge** — Select all contiguous edges in that edge loop.
+  - **Over a face** — Select all faces of the same area (same connected face region).
+  - **Over a component instance** — Select all identical instances (same component definition) in the current context.
+  - Selection is always scoped to the current container (e.g. when editing inside a group, only geometry in that group is considered).
 
 ### 3D canvas and visual styles
 
@@ -169,6 +174,9 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
 - **Move tool** — Interactive move: first point (from), second point (to). Uses inferencing and snapping to keep placement accurate. Dimensions on screen; designer can type a distance.
 - **Quick Copy** — While using Move, tapping **Ctrl** creates a copy instead of moving the original (Move under the hood; Ctrl toggles copy mode). Preview shows the copy before commit.
 - **Array tool** — Builds an array of copies along a vector. Same interaction as Move (first point, second point; inferencing and snapping). Produces multiple copies along that vector; count and spacing can be set (e.g. on-screen or typed). Temporary preview shows the full array before execution.
+- **Scale** — Uniform scale: resize selection by a factor around a base point (e.g. origin or selection center). Preview before commit.
+- **Non-uniform scale** — Scale along one or more axes independently (e.g. stretch in X only). Same base-point and preview behavior.
+- **Mirror** — Mirror selection across a plane (e.g. pick two points or use a construction plane). Preview before commit.
 
 ### Clipboard: cut, copy, paste
 
