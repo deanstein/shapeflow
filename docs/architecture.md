@@ -111,7 +111,7 @@ Together, the FlowChart, viewport, and Properties panel form a triad: one select
 
 ## 4. Planned features
 
-The following features are intended for ShapeFlow. Order and grouping are for clarity; implementation priority is tracked in section 6.
+The following features are intended for ShapeFlow. Order and grouping are for clarity; implementation priority is tracked in section 7.
 
 ### General UX
 
@@ -120,6 +120,7 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
 - **Temporary preview graphics** — Tools that create or transform geometry (e.g. drawing a line, offsetting, copy, array) show **temporary** preview graphics before execution. The designer sees the result in place; committing (e.g. Enter) applies it, cancel (Escape) discards it. Same pattern across tools for consistency.
 - **Hide rest of model (H)** — When editing inside a group or component, tapping **H** toggles hiding or showing the context outside that container (the rest of the model). Reduces clutter while working on the contents; tap H again to bring the rest back.
 - **Double-click to edit** — Double-click a group or component to enter it for editing. Consistent way to step into a container.
+- **Units** — Per-file unit system. Supported: **Feet/inch**, **Inch**, **Meters**, **Centimeters**, **Millimeters**. Dimensions and input respect the active unit; the setting is stored with the file (see Data persistence).
 
 ### Selection
 
@@ -255,20 +256,45 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
 
 ---
 
-## 5. Out of scope / open questions
+## 5. Data persistence
+
+The same data model is used **in memory** and **on disk**: the runtime scene graph, attributes, flows, and related state mirror the persisted format. Saving writes that structure to a single file; loading restores it. No separate "serialization format"—one schema for both.
+
+### File format: .sf (ZIP container)
+
+A **.sf** file is a ZIP archive. Local-only: the user saves and opens files from their machine. Supported **units** (per file, set in document settings): **Feet/inch**, **Inch**, **Meters**, **Centimeters**, **Millimeters**.
+
+**Structure:**
+
+- **manifest.json** — Format version, app name, created/modified timestamps.
+- **document.json** — Document-level state:
+  - **units** — Per-file; one of Feet/inch, Inch, Meters, Centimeters, Millimeters.
+  - **visual styles** — Current styles applied to camera when no saved scene is active.
+  - **camera state** — Current camera position, orientation, etc.
+  - Other defaults as needed.
+- **scene.json** — The scene. All of the following are defined in this file:
+  - **hierarchy** — The tree of groups, component instances, bodies, etc. Each node carries id, type, children, transform, local coordinate system (for groups/components), definition_id (for instances), **attributes** (key/value metadata on the node), and references to geometry and flows. Attributes live on the node; no separate store.
+  - **material_assignments** — Node/face → material_id + UV/mapping. Instance-level cascades to unpainted faces; face-level overrides win. Material library is app-level only—not stored in the file.
+  - **layers** — Layer definitions and which nodes belong to which layer.
+  - **location** — Set Location / Update Location data (e.g. lat/lon, satellite, terrain).
+  - **scenes** — Saved scenes (each with camera, visual_style, layer_visibility) and animations (ordered scenes + durations). Visual styles live per saved scene and as the default in document.json.
+- **geometry/** — (Folder in ZIP, referenced by scene.json hierarchy via `geometry_id`.) Flat store: **brep/{id}.brep** (OpenCascade BREP); optional **mesh/{id}.mesh** (cached mesh).
+- **flows/** — (Optional folder in ZIP, referenced by scene.json hierarchy via `flow_id`.) Flow definitions (script or node graph) by id. Omit if flows are inlined in scene.json.
+
+Key bindings, content library, material library, and journaling are **app-level** only and are not stored in the file.
+
+---
+
+## 6. Out of scope / open questions
 
 ### Auth and monetization
 
 - Auth strategy is not yet defined. Requirements may include: taking payments, enforcing a paywall for the Electron app, or identifying users for licensing.
 - Options to consider later: license keys, OAuth plus a minimal backend, or deferring auth and shipping local-only first.
 
-### Persistence
-
-- Local storage only for the current scope. File format, schema versioning, and upgrade path are to be defined in future work.
-
 ---
 
-## 6. Proposed future work and repo strategy
+## 7. Proposed future work and repo strategy
 
 ### Repo strategy
 
