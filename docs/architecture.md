@@ -271,14 +271,16 @@ A **.sf** file is a ZIP archive. Local-only: the user saves and opens files from
   - **units** — Per-file; one of Feet/inch, Inch, Meters, Centimeters, Millimeters.
   - **visual styles** — Current styles applied to camera when no saved scene is active.
   - **camera state** — Current camera position, orientation, etc.
-  - Other defaults as needed.
-- **scene.json** — The scene. All of the following are defined in this file:
-  - **hierarchy** — The tree of groups, component instances, bodies, etc. Each node carries id, type, children, transform, local coordinate system (for groups/components), definition_id (for instances), **attributes** (key/value metadata on the node), and references to geometry and flows. Attributes live on the node; no separate store.
-  - **material_assignments** — Node/face → material_id + UV/mapping. Instance-level cascades to unpainted faces; face-level overrides win. Material library is app-level only—not stored in the file.
-  - **layers** — Layer definitions and which nodes belong to which layer.
   - **location** — Set Location / Update Location data (e.g. lat/lon, satellite, terrain).
-  - **scenes** — Saved scenes (each with camera, visual_style, layer_visibility) and animations (ordered scenes + durations). Visual styles live per saved scene and as the default in document.json.
-- **geometry/** — (Folder in ZIP, referenced by scene.json hierarchy via `geometry_id`.) Flat store: **brep/{id}.brep** (OpenCascade BREP); optional **mesh/{id}.mesh** (cached mesh).
+  - Other defaults as needed.
+- **model.json** — The entire model as a hierarchical tree:
+  - **geometry** (vertex, edge, face, body):
+    - id, transform, material assignment, layer, attributes, flows
+  - **containers** (group or component):
+    - id, transform, coordinate system, layer, material assignment, attributes, flows
+- **geometry/** — Folder in ZIP, referenced by scene.json hierarchy via `geometry_id`. Flat store: **brep/{id}.brep** (OpenCascade BREP); optional **mesh/{id}.mesh** (cached mesh).
+- **layers/** — Layers available in the model
+- **scenes/** — Saved scenes (each with camera, visual_style, layer_visibility) and animations (ordered states + durations). Visual styles live per saved state and as the default in document.json.
 - **flows/** — (Optional folder in ZIP, referenced by scene.json hierarchy via `flow_id`.) Flow definitions (script or node graph) by id. Omit if flows are inlined in scene.json.
 
 Key bindings, content library, material library, and journaling are **app-level** only and are not stored in the file.
