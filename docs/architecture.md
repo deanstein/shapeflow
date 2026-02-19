@@ -258,11 +258,11 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
 
 ## 5. Data persistence
 
-The same data model is used **in memory** and **on disk**: the runtime scene graph, attributes, flows, and related state mirror the persisted format. Saving writes that structure to a single file; loading restores it. No separate "serialization format"—one schema for both.
+The same **logical** data model is used in memory and on disk: the runtime scene graph, attributes, flows, and related state mirror the persisted format. Stable IDs and schema are shared so that saving writes that structure to a single file and loading restores it without a separate "serialization format." The runtime may add non-persisted structures (e.g. spatial indices, caches, GPU buffers) for performance; those are derived on load and not stored.
 
 ### File format: .sf (ZIP container)
 
-A **.sf** file is a ZIP archive. Local-only: the user saves and opens files from their machine. Supported **units** (per file, set in document settings): **Feet/inch**, **Inch**, **Meters**, **Centimeters**, **Millimeters**.
+A **.sf** file is a ZIP archive. Local-only: the user saves and opens files from their machine.
 
 **Structure:**
 
@@ -273,15 +273,18 @@ A **.sf** file is a ZIP archive. Local-only: the user saves and opens files from
   - **camera state** — Current camera position, orientation, etc.
   - **location** — Set Location / Update Location data (e.g. lat/lon, satellite, terrain).
   - Other defaults as needed.
-- **model.json** — The entire model as a hierarchical tree:
-  - **geometry** (vertex, edge, face, body):
-    - id, transform, material assignment, layer, attributes, flows
-  - **containers** (group or component):
-    - id, transform, coordinate system, layer, material assignment, attributes, flows
-- **geometry/** — Folder in ZIP, referenced by scene.json hierarchy via `geometry_id`. Flat store: **brep/{id}.brep** (OpenCascade BREP); optional **mesh/{id}.mesh** (cached mesh).
-- **layers/** — Layers available in the model
+- **model.json** — The entire model as a hierarchical tree. The tree is at **body and container** level only (not per vertex/edge/face) to keep the file small and parse fast:
+  - **geometry nodes** (body level): id, transform, `geometry_id` (reference to geometry/), material assignment, layer, attributes, flows. Sub-shape attributes and flows (e.g. on a face or edge) are stored in side structures keyed by **stable sub-shape id** (see Topological naming below).
+  - **containers** (group or component): id, transform, coordinate system, layer, material assignment, attributes, flows; children reference geometry or nested containers.
+- **geometry/** — Folder in ZIP, referenced by the model.json hierarchy via `geometry_id`. Flat store: **brep/{id}.brep** (OpenCascade BREP); optional **mesh/{id}.mesh** (cached mesh). If a mesh file is missing or older than the corresponding brep, the engine regenerates the mesh on load; cached mesh is for performance only and is not authoritative.
+- **materials/** — Material definitions used in this document (name, color, texture paths, etc.), stored by id. Geometry and containers reference materials by id for assignment. The app-level "material library" (e.g. local directory) is separate; the file stores only definitions and assignments for this model.
+- **layers/** — Contains **layers.json** listing all layers (id, name, visibility, color, etc.). The model.json hierarchy references layers by id.
 - **scenes/** — Saved scenes (each with camera, visual_style, layer_visibility) and animations (ordered states + durations). Visual styles live per saved state and as the default in document.json.
-- **flows/** — (Optional folder in ZIP, referenced by scene.json hierarchy via `flow_id`.) Flow definitions (script or node graph) by id. Omit if flows are inlined in scene.json.
+- **flows/** — (Optional folder in ZIP, referenced by the model.json hierarchy via `flow_id`.) Flow definitions (script or node graph) by id. Omit if flows are inlined in model.json.
+
+**Topological naming** — Attributes and flows can be attached to sub-shapes (e.g. a face or edge). The engine must maintain **stable sub-shape ids** across topology-changing edits (e.g. splitting a face) so that bindings survive where possible. How stable ids are generated and persisted (e.g. stored in model.json or in geometry metadata) is part of the engine contract; the file format reserves a place for sub-shape–keyed attributes and flows.
+
+The format is designed so that optional **lazy loading** (e.g. loading only visible or current components first) or chunking could be added later without changing this high-level structure.
 
 Key bindings, content library, material library, and journaling are **app-level** only and are not stored in the file.
 
