@@ -73,7 +73,7 @@ Together, the FlowChart, viewport, and Properties panel form a triad: one select
 
 ### Interface
 
-- **Svelte** powers the user interface for both the web app and the Electron app. The viewport, FlowChart, Properties panel, and all shell UI are built with Svelte (and TypeScript), giving a single UI stack across platforms and keeping the front end reactive and maintainable.
+- **Svelte** powers the user interface for both the web app and the Electron app. The viewport, FlowChart, Properties panel, and all shell UI are built with Svelte (and TypeScript), giving a single UI stack across platforms and keeping the front end reactive and maintainable. The UI is built from **reusable Svelte components** so that shared patterns (tools, panels, inputs) are consistent and easy to maintain.
 
 ### Application API
 
@@ -121,6 +121,7 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
 - **Hide rest of model (H)** — When editing inside a group or component, tapping **H** toggles hiding or showing the context outside that container (the rest of the model). Reduces clutter while working on the contents; tap H again to bring the rest back.
 - **Double-click to edit** — Double-click a group or component to enter it for editing. Consistent way to step into a container.
 - **Units** — Per-file unit system. Supported: **Feet/inch**, **Inch**, **Meters**, **Centimeters**, **Millimeters**. Dimensions and input respect the active unit; the setting is stored with the file (see Data persistence).
+- **AutoSave** — Configurable automatic save: the current model is saved to its current location on disk (or to a user-chosen location if it’s a new file) every **X** minutes, with **X** set by the user.
 
 ### Selection
 
