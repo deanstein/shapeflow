@@ -83,6 +83,15 @@ Together, the FlowChart, viewport, and Properties panel form a triad: one select
 
 - **OpenCascade (C++)** is the intended modeling kernel for geometry and topology. If the engine is later split into a separate (e.g. private) repo, a stable API/ABI boundary should be defined so the rest of the app depends on that contract rather than kernel internals.
 
+### Viewport and rendering
+
+- The **3D viewport** uses WebGL (or WebGPU where available) via a library such as **Three.js**. The viewport is a consumer of **tessellated meshes** produced by the engine from BRep geometry; it does not drive the modeling kernel. The same stack can serve both the web app and the Electron app, keeping one rendering codebase. Cameras, controls, materials, shadows, and environment (grid, sky, etc.) are handled in this layer.
+
+### Viewport performance
+
+- **Primary goal:** Keep the viewport responsive (e.g. 60 fps or close) during interaction—rotate, zoom, select, draw. The main bottleneck is kernel work and tessellation (BRep → mesh), not the renderer; the renderer stays thin and fast.
+- **Techniques:** Level-of-detail (LOD), **instancing** for repeated component instances, frustum culling, and use of **cached meshes** (see BRep and mesh conversion and Data persistence) so that display does not re-tessellate unnecessarily. Large-model limits differ by platform: the web app is more constrained (WASM, memory, workers); the Electron app can target higher polygon counts and heavier scenes.
+
 ### Web app
 
 - Runs in the browser. OpenCascade would need to be used via a WASM build; there is no native C++ in the browser.
@@ -148,6 +157,8 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
   - **Environment:** Grid, axes, north arrow, sky color(s), ground plane transparency and color.
   - **Diagnostics:** Watertight issues, back faces.
   - **Highlights:** Option for **hover highlights** (faces, edges, vertices, containers) when the cursor is over them; and **selection highlights** for the current selection. Both can be toggled or adjusted so the designer can choose how much feedback they want.
+- **Primary viewport** — The main 3D view uses **real-time rasterization** (e.g. the standard Three.js pipeline) so that interaction stays smooth. “Impressive” graphics in the sense of high visual quality are not the default during modeling.
+- **Optional presentation / render mode** — For screenshots, presentations, or marketing imagery, an optional **path-traced** or other high-quality still render can be offered (e.g. “Render current view” or “Presentation mode”). The user triggers it, waits for convergence, and gets a single image with soft shadows, global illumination, or reflections. This is not the main interaction view; the primary viewport remains real-time raster for responsiveness.
 
 ### FlowChart canvas
 
