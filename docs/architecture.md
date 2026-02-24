@@ -160,6 +160,26 @@ The following features are intended for ShapeFlow. Order and grouping are for cl
 - **Primary viewport** — The main 3D view uses **real-time rasterization** (e.g. the standard Three.js pipeline) so that interaction stays smooth. “Impressive” graphics in the sense of high visual quality are not the default during modeling.
 - **Optional presentation / render mode** — For screenshots, presentations, or marketing imagery, an optional **path-traced** or other high-quality still render can be offered (e.g. “Render current view” or “Presentation mode”). The user triggers it, waits for convergence, and gets a single image with soft shadows, global illumination, or reflections. This is not the main interaction view; the primary viewport remains real-time raster for responsiveness.
 
+### Navigation and camera
+
+**Navigation tools**
+
+- **Orbit (right-click drag)** — Rotate the camera around a pivot point. The pivot is chosen by **raycasting** from the cursor into the scene: first hit on geometry, or intersection with the **ground plane** if the ray misses geometry, or if the cursor is “in the sky” (no geometry or ground hit) a **fallback pivot** a fixed distance in front of the camera. This keeps orbit centered on what the user is looking at.
+- **Pan (middle-click drag)** — Translate the camera (and pivot) in the view plane.
+- **Zoom (scroll wheel)** — Move the camera toward or away from the current target (pivot). **Dynamic zoom speed:** zoom slows as the camera gets closer to the target so that fine control is possible near geometry. **Ctrl + scroll** — Zoom at a **constant speed**, making it easy to zoom through surfaces and into interior spaces.
+- **Zoom to window (marquee zoom)** — Draw a rectangle in the viewport (e.g. click-drag); the view zooms so that the drawn region fills the view (or the view frames that region). Standard “zoom to window” / “zoom box” behavior.
+
+**Camera modes**
+
+- **3-point perspective** — Default perspective projection (three vanishing points).
+- **2-point perspective** — Perspective with verticals kept vertical (two vanishing points); common for architectural views.
+- **Orthographic** — Parallel projection; no perspective distortion. Useful for technical and plan views.
+
+**Default views**
+
+- **Standard views:** Top, Bottom, Left, Right, Front, Back. One action (e.g. menu, toolbar, or shortcut) per view; the camera jumps to that orientation.
+- **Coordinate system:** These views are defined relative to the **world** coordinate system when working at the root level. When **editing inside a group or component**, they are defined relative to that container’s **local coordinate system** (origin and axes), so “Top” means the top of the group, not the world.
+
 ### FlowChart canvas
 
 - **FlowChart canvas** — Interactive, always mirroring the 3D scene. Selection in the FlowChart selects the corresponding elements in the 3D canvas (and vice versa).
